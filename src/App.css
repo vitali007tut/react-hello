@@ -32,19 +32,6 @@ input[type="text"] {
   border-radius: 10px;
 }
 
-.search-container button {
-  float: right;
-  margin-top: 8px;
-  background: #ddd;
-  font-size: 17px;
-  border: none;
-  cursor: pointer;
-}
-
-.search-container button:hover {
-  background: #ccc;
-}
-
 .cardsContainer {
   display: flex;
   flex-wrap: wrap;

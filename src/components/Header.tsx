@@ -1,5 +1,4 @@
 import React, { Component, ReactNode } from "react";
-import { GoSearch } from "react-icons/go";
 import { Props } from "./Character";
 import ErrorButton from "./ErrorButton";
 
@@ -29,7 +28,7 @@ export default class Header extends Component<
 
   handlerSearch = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const trimmedValue = this.state.searchValue.trim()
+    const trimmedValue = this.state.searchValue.trim();
     localStorage.setItem("searchValue", trimmedValue);
     this.props.sendDataToParent(trimmedValue);
   };
@@ -47,10 +46,10 @@ export default class Header extends Component<
             onChange={this.changeSearchValue}
           />
           <button onClick={this.handlerSearch}>
-            <GoSearch color={"red"} />
+            Search
           </button>
         </div>
-        <ErrorButton/>
+        <ErrorButton />
       </>
     ) as ReactNode;
   }
