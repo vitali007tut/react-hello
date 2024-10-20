@@ -8,7 +8,10 @@
 }
 
 .card {
-  border: #1a1a1a solid 1px;
+  border: #000 solid 1px;
+  border-radius: 10px;
+  background-color: #000;
+  padding-bottom: 10px;
 }
 
 .read-the-docs {
@@ -50,6 +53,7 @@ input[type="text"] {
 
 img {
   width: 200px;
+  border-radius: 10px 10px 0px 0px;
 }
 
 h1 {

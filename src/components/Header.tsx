@@ -1,6 +1,7 @@
-import React, {Component, ReactNode} from "react";
-import {GoSearch} from "react-icons/go";
-import {Props} from "./Character";
+import React, { Component, ReactNode } from "react";
+import { GoSearch } from "react-icons/go";
+import { Props } from "./Character";
+import ErrorButton from "./ErrorButton";
 
 interface MyComponentProps {
   sendDataToParent: (searchValue: string) => void;
@@ -9,6 +10,7 @@ interface MyComponentProps {
 interface MyComponentState {
   searchValue: string;
   data: Props[];
+  errorArr: [];
 }
 
 export default class Header extends Component<
@@ -18,7 +20,7 @@ export default class Header extends Component<
   constructor(props: MyComponentProps) {
     super(props);
     const initialValue = localStorage.getItem("searchValue");
-    this.state = { searchValue: initialValue ?? "", data: [] };
+    this.state = { searchValue: initialValue ?? "", data: [], errorArr: [] };
   }
 
   changeSearchValue = (e: React.FormEvent<HTMLInputElement>) => {
@@ -27,32 +29,29 @@ export default class Header extends Component<
 
   handlerSearch = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    localStorage.setItem('searchValue', this.state.searchValue);
-    this.props.sendDataToParent(this.state.searchValue);
+    const trimmedValue = this.state.searchValue.trim()
+    localStorage.setItem("searchValue", trimmedValue);
+    this.props.sendDataToParent(trimmedValue);
   };
-
-  fetchSeachData = async (value: string) => {
-    const res = await fetch(`https://potterapi-fedeperin.vercel.app/en/characters?search=${value}`)
-    return await res.json()
-  }
 
   render() {
     return (
-        <>
-          <h1>Harry Potter Characters</h1>
-          <div className="search-container">
-            <input
-                type="text"
-                placeholder="Search by name or nickname.."
-                name="search"
-                value={this.state.searchValue}
-                onChange={this.changeSearchValue}
-            />
-            <button onClick={this.handlerSearch}>
-              <GoSearch color={"red"}/>
-            </button>
-          </div>
-        </>
+      <>
+        <h1>Harry Potter Characters</h1>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by name or nickname.."
+            name="search"
+            value={this.state.searchValue}
+            onChange={this.changeSearchValue}
+          />
+          <button onClick={this.handlerSearch}>
+            <GoSearch color={"red"} />
+          </button>
+        </div>
+        <ErrorButton/>
+      </>
     ) as ReactNode;
   }
 }

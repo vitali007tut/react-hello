@@ -3,8 +3,9 @@ import "./App.css";
 import Header from "./components/Header";
 import Section from "./components/Section";
 import {Props} from "./components/Character";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-type MyComponentProps = unknown
+type MyComponentProps = unknown;
 
 interface MyComponentState {
     data: Props[] | null;
@@ -16,17 +17,20 @@ interface MyComponentState {
 type Error = {
     name: string;
     message: string;
-    stack?: string
-}
+    stack?: string;
+};
 
-export default class App extends React.Component<MyComponentProps, MyComponentState> {
+export default class App extends React.Component<
+    MyComponentProps,
+    MyComponentState
+> {
     constructor(props: MyComponentProps) {
         super(props);
         this.state = {
             data: null,
             loading: true,
             error: null,
-            searchValue: localStorage.getItem('searchValue') ?? '',
+            searchValue: localStorage.getItem("searchValue") ?? "",
         };
     }
 
@@ -35,6 +39,7 @@ export default class App extends React.Component<MyComponentProps, MyComponentSt
     }
 
     fetchData = async (searchValue: string) => {
+        this.setState({loading: true});
         try {
             const response = await fetch(
                 `https://potterapi-fedeperin.vercel.app/en/characters?search=${searchValue}`,
@@ -44,7 +49,7 @@ export default class App extends React.Component<MyComponentProps, MyComponentSt
             }
 
             const data = await response.json();
-            console.log(data)
+            console.log(data);
             this.setState({data, loading: false});
         } catch (error: unknown) {
             const typedError = error as Error;
@@ -59,18 +64,16 @@ export default class App extends React.Component<MyComponentProps, MyComponentSt
     render() {
         const {data, loading, error} = this.state;
 
-        if (loading) {
-            return <p>Loading...</p>;
-        }
-
         if (error) {
             return <p>Error: {error}</p>;
         }
 
         return (
             <div className="App-container">
+                <ErrorBoundary>
                 <Header sendDataToParent={this.handleDataFromChild}/>
-                <Section  data={data ?? null}/>
+                <Section data={data ?? null} loading={loading}/>
+                </ErrorBoundary>
             </div>
         ) as ReactNode;
     }
