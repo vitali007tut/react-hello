@@ -1,36 +1,77 @@
-import React, { ReactNode } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React, {ReactNode} from "react";
 import "./App.css";
 import Header from "./components/Header";
 import Section from "./components/Section";
+import {Props} from "./components/Character";
 
-class App extends React.Component {
-  render() {
-    return (
-      <>
-        <Header message={"hello"} />
-        <Section />
-        <div>
-          <a href="https://vitejs.dev" target="_blank">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </>
-    ) as ReactNode;
-  }
+type MyComponentProps = unknown
+
+interface MyComponentState {
+    data: Props[] | null;
+    loading: boolean;
+    error: string | null;
+    searchValue: string;
 }
 
-export default App;
+type Error = {
+    name: string;
+    message: string;
+    stack?: string
+}
+
+export default class App extends React.Component<MyComponentProps, MyComponentState> {
+    constructor(props: MyComponentProps) {
+        super(props);
+        this.state = {
+            data: null,
+            loading: true,
+            error: null,
+            searchValue: localStorage.getItem('searchValue') ?? '',
+        };
+    }
+
+    componentDidMount() {
+        this.fetchData(this.state.searchValue);
+    }
+
+    fetchData = async (searchValue: string) => {
+        try {
+            const response = await fetch(
+                `https://potterapi-fedeperin.vercel.app/en/characters?search=${searchValue}`,
+            );
+            if (!response.ok) {
+                new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            console.log(data)
+            this.setState({data, loading: false});
+        } catch (error: unknown) {
+            const typedError = error as Error;
+            this.setState({error: typedError.message, loading: false});
+        }
+    };
+
+    handleDataFromChild = (searchValue: string) => {
+        this.fetchData(searchValue);
+    };
+
+    render() {
+        const {data, loading, error} = this.state;
+
+        if (loading) {
+            return <p>Loading...</p>;
+        }
+
+        if (error) {
+            return <p>Error: {error}</p>;
+        }
+
+        return (
+            <div className="App-container">
+                <Header sendDataToParent={this.handleDataFromChild}/>
+                <Section  data={data ?? null}/>
+            </div>
+        ) as ReactNode;
+    }
+}

@@ -1,7 +1,33 @@
-import { Component } from "react";
+import {Component} from "react";
+import Character, {Props} from "./Character";
 
-export default class Section extends Component {
+type TProps = {
+  data: Props[] | null
+}
+
+export default class Section extends Component<TProps> {
+
+  constructor(props: TProps) {
+    super(props);
+  }
+
   render() {
-    return <div>Main section</div>;
+    if (!this.props.data?.length) return <h2>No characters found</h2>
+
+    return (
+        <div className={'cardsContainer'}>
+          {this.props.data.map(item => (
+              <Character key={item.fullName}
+                         birthdate={item.birthdate}
+                         children={item.children}
+                         fullName={item.fullName}
+                         hogwartsHouse={item.hogwartsHouse}
+                         image={item.image}
+                         index={item.index}
+                         interpretedBy={item.interpretedBy}
+                         nickname={item.nickname}/>
+          ))}
+        </div>
+    )
   }
 }
